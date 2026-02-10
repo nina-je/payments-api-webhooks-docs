@@ -7,7 +7,7 @@ When writing these examples, I assumed a role of a Technical Writer in a fiction
 ## Document map
 
 * **Tutorial**: A step-by-step guide to receiving your first test webhook.
-  * [Receive your first webhook](./docs/tutorial/receive-your-first-webhook.md)
+  * [Receive your first webhook](./docs/tutorial/receive-your-first-webhook.md)  
 * **How-to guides**: Practical instructions on handling deliveries and ensuring idempotency.
   * [How to handle payments webhooks](./docs/how-to/how-to-handle-payments-webhooks.md)
   * [How to handle refund webhooks](./docs/how-to/how-to-handle-refund-webhooks.md)
