@@ -5,27 +5,54 @@
 	},
 	"item": [
 		{
-			"name": "Send Test Webhook",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "X-Webhook-Signature",
-						"value": "t=1770201201,v1=5b7f1e948c2d3a6b5e0f9a2c4d8e7b1a6c5f0e9d8b7a6c5d4e3f2b1a0d9c8b7a"
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Send Test Payment Webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "X-Webhook-Signature", "value": "t=1770201201,v1=5b7f1e948c2d3a6b5e0f9a2c4d8e7b1a6c5f0e9d8b7a6c5d4e3f2b1a0d9c8b7a" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"eventId\": \"evt_12345ABC\",\n  \"eventType\": \"payment.completed\",\n  \"paymentId\": \"pay_98765XYZ\",\n  \"created\": \"2026-02-05T09:42:14Z\",\n  \"data\": {\n    \"amount\": 50.50,\n    \"currency\": \"EUR\",\n    \"status\": \"succeeded\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://webhook.site",
+							"protocol": "https",
+							"host": ["webhook", "site"],
+							"path": ["REPLACE_ME"]
+						}
 					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"eventId\": \"evt_12345ABC\",\n  \"eventType\": \"payment.completed\",\n  \"paymentId\": \"pay_98765XYZ\",\n  \"created\": \"2023-10-27T10:00:00Z\",\n  \"data\": {\n    \"amount\": 5000,\n    \"currency\": \"EUR\",\n    \"status\": \"succeeded\"\n  }\n}"
-				},
-				"url": {
-					"raw": "https://webhook.site"
 				}
-			}
+			]
+		},
+		{
+			"name": "Refunds",
+			"item": [
+				{
+					"name": "Send Test Refund Webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "X-Webhook-Signature", "value": "t=1770201201,v1=5b7f1e948c2d3a6b5e0f9a2c4d8e7b1a6c5f0e9d8b7a6c5d4e3f2b1a0d9c8b7a" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"eventId\": \"evt_999888777\",\n  \"eventType\": \"refund.succeeded\",\n  \"paymentId\": \"pay_98765XYZ\",\n  \"refundId\": \"ref_4567MNO\",\n  \"created\": \"2026-02-10T14:30:00Z\",\n  \"data\": {\n    \"amount\": 50.50,\n    \"currency\": \"EUR\",\n    \"reason\": \"customer_request\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://webhook.site",
+							"protocol": "https",
+							"host": ["webhook", "site"],
+							"path": ["REPLACE_ME"]
+						}
+					}
+				}
+			]
 		}
 	]
 }

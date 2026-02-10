@@ -1,4 +1,4 @@
-# Webhooks Reference
+# Webhooks reference
 
 ## Headers
 
@@ -7,34 +7,58 @@
 | `X-Webhook-Signature` | HMAC256 signature for verifying that the request originated from the Payments API. |
 | `Content-Type` | `application/json` |
 
-## Common Fields
+## Common fields
 
 These fields are present in any webhook payload regardless of the event type.
 
 | Name | Type | Description | Example |
 | ---- | ---- | ----------- | ------- |
 | `eventId` | string | Unique webhook event identifier. | `evt_12345ABC` |
-| `eventType` | string | The type of event. See [Event Types](#event-types) for possible values. | `payment.completed` |
-| `created` | string | ISO 8601 timestamp of the event generation. | `2026-02-05T09:42:14Z` |
-| `data` | object | A container for specific payment details (like amount, currency, status). | - |
+| `eventType` | string | The type of event. See [Event types](#event-types) for possible values. | `payment.completed` |
+| `paymentId` | string | The unique ID of the payment the event relates to. | `pay_98765XYZ` |
+| `created` | string | ISO 8601 timestamp of event generation. | `2026-02-05T09:42:14Z` |
+| `data` | object | A container for specific payment details (like amount, currency, or reason). | - |
 
-## Payment Fields
+## Payment-specific fields
 
-These fields are specific to payment-related events.
+These fields are contained in the `data` object when the `eventType` is in the `payment.*` category.
 
 | Name | Type | Description | Example |
 | ---- | ---- | ----------- | ------- |
-| `paymentId` | string | The unique ID of the payment this event relates to. | `pay_98765XYZ` |
+| `data.amount` | number | Payment amount. | `5000.00` |
+| `data.currency` | string | ISO 4217 currency code. | `EUR` |
+| `data.status` | string | Current transaction state. | `succeeded` |
 
-### Event Types
+## Refund-specific fields
 
-`eventType` shows the current state of the payment process.
+These fields are related to the `eventType` in the `refund.*` category.
+
+**Top-level**
+
+| Name | Type | Description | Example |
+| ---- | ---- | ----------- | ------- |
+| `refundId` | string | Unique refund request identifier. | `ref_4567MNO` |
+
+**`data` object**
+
+| Name | Type | Description | Example |
+| ---- | ---- | ----------- | ------- |
+| `data.amount` | number | Refund amount. | `50.00` |
+| `data.currency` | string | ISO 4217 currency code. | `EUR` |
+| `data.reason` | string | Reason for the refund. | `customer_request` |
+
+### Event types
+
+`eventType` shows the current state of the related process.
 
 | Type | Description |
 | ---- | ----------- |
 | `payment.completed` | The payment was successfully authorized and captured. |
 | `payment.failed` | The payment was declined by the external system or failed due to technical issues. |
 | `payment.cancelled` | The payment has been cancelled by the user or the internal system before completion. |
+| `refund.created` | The refund request is initiated. |
+| `refund.succeeded` | Funds are successfully returned to the customer. |
+| `refund.failed` | The refund request is declined by the external system. |
 
 ## Responses
 

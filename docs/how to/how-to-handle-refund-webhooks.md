@@ -1,8 +1,8 @@
-# How to handle payments webhooks
+# How to handle refund webhooks
 
 ## Purpose
 
-This guide explains how to handle payment webhook deliveries, avoid duplicate processing and return a correct response.
+This guide explains how to handle refund webhook deliveries and update the customer's account balance.
 
 ## Prerequisites
 
@@ -25,20 +25,21 @@ X-Webhook-Signature: t=1770201201,v1=5b7f1e948c2d3a6b5e0f9a2c4d8e7b1a6c5f0e9d8b7
 
 ### Step 2: Extract the event data
 
-Extract the JSON body from the request. The `eventId` identifies the event, while the `eventType` determines further action.
+Extract the JSON body from the request. The `paymentId` identifies the payment related to the refund, while the `refundId` identifies the refund request.
 
 **Payload example:**
 
 ```JSON
 {
-  "eventId": "evt_12345ABC",
-  "eventType": "payment.completed",
+  "eventId": "evt_999888777",
+  "eventType": "refund.succeeded",
   "paymentId": "pay_98765XYZ",
-  "created": "2023-10-27T10:00:00Z",
+  "refundId": "ref_4567MNO",
+  "created": "2026-02-10T14:30:00Z",
   "data": {
-    "amount": 5000.00,
+    "amount": 50.00,
     "currency": "EUR",
-    "status": "succeeded"
+    "reason": "customer_request"
   }
 }
 ```
@@ -49,7 +50,7 @@ Check if the `eventId` is already in your database or cache. If it is, ignore it
 
 ### Step 4: Handle the event logic
 
-Process the event based on its `eventType` (e.g., `payment.completed`, `payment.cancelled`, `payment.failed`) according to your business logic.
+Process the event based on its `eventType` (e.g., `refund.created`, `refund.succeeded`, `refund.failed`) according to your business logic.
 
 ### Step 5: Store the event record
 
@@ -65,18 +66,19 @@ Send a `200 OK` HTTP response. Make sure your server responds within 5 seconds t
 %%{init: { "sequence": { "mirrorActors": false } } }%%
 sequenceDiagram
     autonumber
+    participant csys as Client<br/>System
     participant isys as Internal<br/>System
     participant esys as External<br/>System
-    participant csys as Client<br/>System
 
-    isys ->> esys: Creates & authorizes<br/>payment
-    esys ->> esys: Processes payment<br/>(processing, settlement, completion)
-    esys ->> csys: Webhook event<br/>(HTTP POST)
+    csys ->> isys: Request refund (API Call)
+    isys ->> esys: Process refund request
+    esys ->> esys: Verify funds &<br/>execute refund
+    esys -->> csys: Webhook event: refund.succeeded<br/>(HTTP POST)
     csys ->> csys: Identify event,<br/>check idempotency
     alt Already processed
         csys -->> esys: 200 OK
     else Not processed
-        csys ->> csys: Process event
+        csys ->> csys: Update internal balance
         csys ->> csys: Save result
         csys -->> esys: 200 OK
     end
